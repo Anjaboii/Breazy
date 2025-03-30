@@ -1,0 +1,45 @@
+.login-box, .admin-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.error {
+    color: red;
+    margin-bottom: 15px;
+}
+
+#map-picker {
+    margin: 20px 0;
+    border: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+button.delete {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.location-form {
+    margin: 20px 0;
+}
+
+input[type="text"] {
+    padding: 8px;
+    width: 300px;
+}
