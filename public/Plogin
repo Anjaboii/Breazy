@@ -3,25 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login Page</title>
     <style>
+        /* Same styles as in the signup page */
         body {
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #1e2a5a;
+            font-family: Arial, sans-serif;
+            margin: 0;
         }
-        .login-container {
+        .container {
             background: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
+            width: 300px;
         }
-        input, select, button {
+        h2 {
+            margin-bottom: 20px;
+            color: #1e2a5a;
+        }
+        input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -29,61 +35,46 @@
             border-radius: 5px;
         }
         button {
-            background-color: #4a6bff;
+            width: 100%;
+            padding: 10px;
+            background-color: #1e2a5a;
             color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #162047;
+        }
+        p {
+            margin-top: 10px;
+        }
+        a {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #1e2a5a;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        a:hover {
+            background-color: #162047;
         }
     </style>
 </head>
 <body>
-
-    <div class="login-container">
+    <div class="container">
         <h2>Login</h2>
-        <input type="text" id="username" placeholder="Enter Username">
-        <input type="password" id="password" placeholder="Enter Password">
-        <select id="role">
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
-        <button onclick="login()">Login</button>
-        <p id="error-message" style="color: red;"></p>
+        <form id="loginForm" action="login.php" method="POST">
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="password" name="password" placeholder="Password" required id="password">
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="signup.html">Signup here</a></p>
     </div>
-
-    <script>
-        function login() {
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
-            let role = document.getElementById("role").value;
-            let errorMessage = document.getElementById("error-message");
-
-            // Check if the user is an admin
-            if (role === "admin" && username === "admin@gmail.com" && password === "admin123") {
-                window.location.href = "admin/addlocation"; // Redirect Admin
-                return;
-            }
-
-            // Otherwise, check database for user login
-            fetch("login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, role })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (role === "user") {
-                        window.location.href = "Pdashboard"; // Redirect User
-                    }
-                } else {
-                    errorMessage.textContent = "Invalid username or password";
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                errorMessage.textContent = "Server error. Try again later.";
-            });
-        }
-    </script>
-
 </body>
 </html>

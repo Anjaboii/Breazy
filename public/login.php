@@ -3,38 +3,60 @@
 $servername = "localhost";
 $username = "root";  // Default username for XAMPP
 $password = "";  // Default password for XAMPP
-$dbname = "breazy";  // Replace with your database name
+$dbname = "breazy";  // Your database name
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Check if the connection is successful
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if the form is submitted
+// Start the session
+session_start();
+
+// Process the login form only when the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get the form data
-    $email = $_POST['email'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    // Check if 'email' and 'password' are present in $_POST
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
-    // Hash the password before storing it
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // Check if the email exists in the database
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);  // Use the email from the form
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Insert user data into the database
-    $sql = "INSERT INTO users (email, username, password) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $email, $username, $hashedPassword);
+        if ($result->num_rows > 0) {
+            // User found, now check if the password is correct
+            $user = $result->fetch_assoc();
 
-    // Execute the query
-    if ($stmt->execute()) {
-        echo "User registered successfully!";
+            // Verify the password
+            if (password_verify($password, $user['password'])) {
+                // Successful login, set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['username'] = $user['username'];
+
+                // Redirect to dashboard or home page
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                // Incorrect password
+                $error_message = "Invalid password!";
+            }
+        } else {
+            // No user found with that email
+            $error_message = "No account found with this email!";
+        }
+
+        $stmt->close();
     } else {
-        echo "Error: " . $stmt->error;
+        $error_message = "Email and password are required!";
     }
 
-    // Close the statement and connection
-    $stmt->close();
     $conn->close();
 }
 ?>
@@ -44,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Page</title>
+    <title>Login Page</title>
     <style>
         /* CSS to style the form */
         body {
@@ -108,40 +130,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .error-message {
             color: red;
             font-size: 12px;
-            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Signup</h2>
-        <form id="signupForm" action="signup.php" method="POST">
+        <h2>Login</h2>
+        <form action="login.php" method="POST">
             <input type="email" name="email" placeholder="Email Address" required>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required id="password">
-            <input type="password" name="confirm_password" placeholder="Confirm Password" required id="confirm_password">
-            <button type="submit">Signup</button>
-            <p class="error-message" id="passwordError">Passwords do not match!</p>
-        </form>
-        <p>Already have an account? <a href="login.php">Login here</a></p>
-    </div>
-
-    <script>
-        // JavaScript to validate if passwords match
-        document.getElementById('signupForm').addEventListener('submit', function(event) {
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirm_password').value;
-        
-            // Check if password and confirm password match
-            if (password !== confirmPassword) {
-                // Show error message if passwords do not match
-                document.getElementById('passwordError').style.display = 'block';
-                event.preventDefault();  // Prevent form submission
-            } else {
-                // Hide error message if passwords match
-                document.getElementById('passwordError').style.display = 'none';
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <?php
+            if (isset($error_message)) {
+                echo "<p class='error-message'>$error_message</p>";
             }
-        });
-    </script>
+            ?>
+        </form>
+        <p>Don't have an account? <a href="signup.php">Signup here</a></p>
+    </div>
 </body>
 </html>
