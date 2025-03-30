@@ -5,58 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
     <style>
-        body {
-            background-color: #1a1a1a; /* Dark background */
-            color: white;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212; /* Dark background */
+            color: white;
             padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
+
+        .contact-container {
+            background-color: #1f1f1f; /* Slightly lighter than background */
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
         }
+
         h1 {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 26px;
             text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .section {
             margin-bottom: 20px;
         }
-        p {
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #3b82f6; /* Blue highlight */
+        }
+
+        .section p {
             font-size: 14px;
             line-height: 1.6;
+            opacity: 0.9;
         }
-        strong {
-            display: block;
-            margin-top: 15px;
-            font-size: 16px;
+
+        .contact-info {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .contact-info div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .icon {
+            font-size: 18px;
+            background: #3b82f6; /* Blue Icon */
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="contact-container">
         <h1>Contact Us</h1>
-        <p><strong>Thank you for Contacting Breezy!</strong></p>
-        <p>We’re here if you need us.</p>
-        <p>We have all of the resources you may need to get the information and answers you are looking for.</p>
 
-        <p><strong>Breezy Community Forums</strong></p>
-        <p>The Breezy Community Forums is a community-driven source of information that should be your first resource for looking for answers. Here you can browse topics that have already been discussed, post a new question or topic, and respond to other users' posts.</p>
-        
-        <p><strong>Breezy FAQ</strong></p>
-        <p>The Breezy FAQ contains answers to many frequently asked questions about Breezy. Search for your inquiry here to see if it has already been responded to.</p>
+        <div class="section">
+            <h2>Thank You for Contacting Breezy!</h2>
+            <p>We’re here if you need us. We have all the resources you may need to get the information and answers you are looking for.</p>
+        </div>
 
-        <p><strong>Other ways to get in touch</strong></p>
-        <p>If you need to ask a private support request, here are some other ways to reach us.</p>
+        <div class="section">
+            <h2>Breezy Community Forums</h2>
+            <p>The Breezy Community Forums is a community-driven source of information that should be your first resource for answers. You can browse topics, ask questions, and get solutions from other users.</p>
+        </div>
 
-        <p><strong>Breezy Email</strong></p>
-        <p>If an email is needed to receive a response to your inquiry and it does not already exist in one of the sources listed above, you can send an email to us at <strong>contact@breezy.com</strong>. We will do our best to respond to your email as soon as possible and to quickly provide a solution.</p>
+        <div class="section">
+            <h2>Breezy FAQ</h2>
+            <p>Our FAQ contains answers to many commonly asked questions about Breezy. Search for your inquiry here to see if it has already been answered.</p>
+        </div>
 
-        <p><strong>Breezy Phone Contacts</strong></p>
-        <p>Our phone lines are available Monday through Friday, 8:00 a.m. to 5:00 p.m. Mountain Time. We do our best to answer, but please try again later if we do not. <strong>+98701234897</strong> or <strong>+9870132578</strong> for international users.</p>
+        <div class="section">
+            <h2>Other Ways to Get in Touch</h2>
+            <p>If you need to make a private request, here are some ways to reach us.</p>
+        </div>
 
-        <p><strong>📞 +44 7318 8373</strong></p>
-        <p><strong>📧 originalchat@gmail.com</strong></p>
+        <div class="section">
+            <h2>Breezy Email</h2>
+            <p>If an email response is needed and your inquiry is not found in the resources above, please contact us at:</p>
+        </div>
+
+        <div class="contact-info">
+            <div>
+                <span class="icon">📞</span>
+                <span>+44 7318 8373</span>
+            </div>
+            <div>
+                <span class="icon">📧</span>
+                <span>originalchat@gmail.com</span>
+            </div>
+        </div>
     </div>
 
 </body>
