@@ -1,15 +1,21 @@
 <?php
-// Database config (keep your existing MySQL setup)
-$db_host = "localhost";
-$db_user = "root";
-$db_pass = "";
-$db_name = "Breazy";
+// Always use error reporting during development
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// PurpleAir API config
-define('PURPLEAIR_API_KEY', 'F1490A8B-0CA4-11F0-81BE-42010A80001F');
-define('PURPLEAIR_API_URL', 'https://api.purpleair.com/v1/sensors');
+// Database credentials
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root'); 
+define('DB_PASS', ''); // Empty password for XAMPP default
+define('DB_NAME', 'Breazy'); // Must match your database name
 
-// Create database connection
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-if ($conn->connect_error) die("DB Connection failed: " . $conn->connect_error);
+// Establish connection
+try {
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
+    }
+} catch (Exception $e) {
+    die("Database error: " . $e->getMessage());
+}
 ?>
