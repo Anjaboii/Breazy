@@ -93,4 +93,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-refresh every 5 minutes
     setInterval(loadAirQualityData, 300000);
+
+    // Add this function
+async function loadCustomLocations() {
+    const response = await fetch('api/get_locations.php');
+    const locations = await response.json();
+    
+    locations.forEach(loc => {
+        L.circleMarker([loc.latitude, loc.longitude], {
+            radius: 8,
+            fillColor: '#3498db',
+            color: '#fff',
+            fillOpacity: 0.8
+        }).bindPopup(`<b>${loc.name}</b><br>Custom Location`).addTo(map);
+    });
+}
+
+// Call it after your existing map initialization
+loadCustomLocations();
 });

@@ -3,7 +3,7 @@
 $db_host = "localhost";
 $db_user = "root";
 $db_pass = "";
-$db_name = "air_quality_colombo";
+$db_name = "Breazy";
 
 // PurpleAir API config
 define('PURPLEAIR_API_KEY', 'F1490A8B-0CA4-11F0-81BE-42010A80001F');
