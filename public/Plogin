@@ -58,7 +58,7 @@
 
             // Check if the user is an admin
             if (role === "admin" && username === "admin@gmail.com" && password === "admin123") {
-                window.location.href = "addlocation"; // Redirect Admin
+                window.location.href = "admin/addlocation"; // Redirect Admin
                 return;
             }
 
