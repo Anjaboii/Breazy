@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Your PurpleAir API Key (Replace with your real key)
-const API_KEY = "F1490A8B-0CA4-11F0-81BE-42010A80001F"; 
+const API_KEY = "6EF56E2D-0E56-11F0-81BE-42010A80001F"; 
 
 // Fetch AQI data from PurpleAir API
 async function fetchAQIData() {
