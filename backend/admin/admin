@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Add Locations</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .fetch-btn {
+            background: #008CBA;
+        }
+
+        .fetch-btn:hover {
+            background: #007bb5;
+        }
+    </style>
+</head>
+<body>
+    <h2>Add New AQI Location</h2>
+    
+    <form id="locationForm">
+        <label for="location">Location Name:</label>
+        <input type="text" id="location" required>
+
+        <label for="lat">Latitude:</label>
+        <input type="text" id="lat" required>
+        
+        <label for="lon">Longitude:</label>
+        <input type="text" id="lon" required>
+        
+        <label for="aqi">AQI:</label>
+        <input type="number" id="aqi" required readonly>
+        
+        <button type="button" class="fetch-btn" onclick="fetchAQI()">Fetch AQI</button>
+        <button type="submit">Add Location</button>
+    </form>
+
+    <script>
+        function fetchAQI() {
+            const lat = document.getElementById("lat").value;
+            const lon = document.getElementById("lon").value;
+
+            if (!lat || !lon) {
+                alert("Please enter Latitude and Longitude first.");
+                return;
+            }
+
+            const apiKey = "F1490A8B-0CA4-11F0-81BE-42010A80001F";
+            const url = `https://api.purpleair.com/v1/sensors?fields=pm2.5&location_type=0&lat=${lat}&lon=${lon}&radius=1000&api_key=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data && data.data.length > 0) {
+                        const aqi = data.data[0][1]; // Assuming first sensor result
+                        document.getElementById("aqi").value = aqi;
+                    } else {
+                        alert("No AQI data found for this location.");
+                    }
+                })
+                .catch(error => console.error("Error fetching AQI:", error));
+        }
+
+        document.getElementById("locationForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const location = document.getElementById("location").value;
+            const lat = document.getElementById("lat").value;
+            const lon = document.getElementById("lon").value;
+            const aqi = document.getElementById("aqi").value;
+
+            fetch("http://localhost/BreazyAQI/backend/resources/php/api.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ location, lat, lon, aqi })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>

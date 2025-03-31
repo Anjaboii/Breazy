@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breazy</title>
+    <title>Breazy - Full Screen Map</title>
     
     <link rel="icon" href="assets/Logo.png" type="image/png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
         :root {
@@ -25,15 +26,8 @@
 
         html, body {
             height: 100%;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            width: 100%;
+            overflow: hidden;
         }
 
         header {
@@ -43,9 +37,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            width: 100%;
+            z-index: 1000;
         }
 
         .logo-container {
@@ -57,7 +52,6 @@
         .logo-img {
             height: 50px;
             width: auto;
-            transition: transform 0.3s ease;
         }
 
         nav ul {
@@ -75,90 +69,69 @@
             transition: all 0.3s ease;
         }
 
-        nav a:hover, nav a:focus {
+        nav a:hover {
             background-color: #f0f0f0;
             color: var(--primary-color);
-            outline: none;
         }
 
-        .main-content {
-            flex: 1;
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--secondary-color);
-        }
-
-        .aqi-info {
-            margin-top: 2rem;
-            background-color: var(--white);
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            max-width: 800px;
-            margin: 2rem auto;
-            text-align: left;
-        }
-
-        .aqi-info p {
-            font-size: 1.1rem;
-            margin: 10px 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background-color: var(--secondary-color);
-            color: var(--white);
-            margin-top: auto;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .logo-container {
-                margin-bottom: 1rem;
-            }
-            
-            nav ul {
-                gap: 1rem;
-            }
+        #map {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
         }
     </style>
 </head>
 <body>
-
     <header>
         <div class="logo-container">
-            <img src="" alt="Breazy Logo" onerror="this.src='https://via.placeholder.com/150?text=Logo';">
+            <img src="assets/Logo.png" alt="Breazy Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/150?text=Logo';">
         </div>
         <nav>
             <ul>
-                <li><a href="Pdashboard">HOME</a></li>
-                <li><a href="contactus">Contact US</a></li>
-                <li><a href="map-api">MAP API</a></li>
+                <li><a href="/Pdashboard">HOME</a></li>
+                <li><a href="/contactus">Contact US</a></li>
+                <li><a href="/map-api">MAP API</a></li>
             </ul>
         </nav>
     </header>
 
+    <div id="map"></div>
 
-
-
-
-   <footer>
-        <p>&copy; 2025 Breazy. All rights reserved.</p>
-    </footer>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map("map").setView([6.9271, 79.8612], 12);
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "&copy; OpenStreetMap contributors",
+            }).addTo(map);
+
+            fetch("http://localhost/BreazyAQI/backend/resources/php/getlocations.php")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.locations.forEach(loc => {
+                            let color = loc.aqi < 50 ? "green" :
+                                        loc.aqi < 100 ? "yellow" :
+                                        loc.aqi < 150 ? "orange" : "red";
+
+                            L.circleMarker([loc.latitude, loc.longitude], {
+                                color: color,
+                                radius: 8,
+                                fillOpacity: 0.8
+                            })
+                            .bindPopup(`<b>${loc.location}</b><br>AQI: ${loc.aqi}`)
+                            .addTo(map);
+                        });
+                    } else {
+                        console.error("Failed to load locations");
+                    }
+                })
+                .catch(error => console.error("Error fetching locations:", error));
+        });
+    </script>
 </body>
 </html>
