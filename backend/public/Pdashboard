@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Breazy</title>
-    <link rel="icon" href="" type="image/x-icon">
+    
+    <link rel="icon" href="assets/Logo.png" type="image/png">
+
     <style>
         :root {
             --primary-color: #4a6bff;
@@ -13,12 +15,19 @@
             --text-color: #333;
             --white: #ffffff;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         body {
@@ -51,10 +60,6 @@
             transition: transform 0.3s ease;
         }
 
-        .logo-img:hover {
-            transform: scale(1.05);
-        }
-
         nav ul {
             display: flex;
             list-style: none;
@@ -77,6 +82,7 @@
         }
 
         .main-content {
+            flex: 1;
             max-width: 1200px;
             margin: 3rem auto;
             padding: 0 2rem;
@@ -89,32 +95,20 @@
             color: var(--secondary-color);
         }
 
-        .features {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
+        .aqi-info {
+            margin-top: 2rem;
             background-color: var(--white);
+            padding: 1rem;
             border-radius: 10px;
-            padding: 2rem;
-            width: 280px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: left;
         }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
+        .aqi-info p {
+            font-size: 1.1rem;
+            margin: 10px 0;
         }
 
         footer {
@@ -122,7 +116,7 @@
             padding: 2rem;
             background-color: var(--secondary-color);
             color: var(--white);
-            margin-top: 3rem;
+            margin-top: auto;
         }
 
         /* Responsive adjustments */
@@ -139,55 +133,32 @@
             nav ul {
                 gap: 1rem;
             }
-            
-            .features {
-                flex-direction: column;
-                align-items: center;
-            }
         }
     </style>
 </head>
 <body>
+
     <header>
         <div class="logo-container">
-            <img src="assets\Logo.png" alt="Breazy Logo" 
-     onerror="this.src='https://via.placeholder.com/150?text=Logo';">
-
+            <img src="" alt="Breazy Logo" onerror="this.src='https://via.placeholder.com/150?text=Logo';">
         </div>
         <nav>
             <ul>
                 <li><a href="Pdashboard">HOME</a></li>
                 <li><a href="contactus">Contact US</a></li>
-                <li><a href="">MAP API</a></li>
+                <li><a href="map-api">MAP API</a></li>
             </ul>
         </nav>
     </header>
 
-    <div class="main-content">
-        <h1>Welcome to Breazy</h1>
-        <p>A modern solution for your needs with integrated mapping capabilities.</p>
-        
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">📍</div>
-                <h3>Map Integration</h3>
-                <p>Powerful mapping API for location-based services and data visualization.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Fast Performance</h3>
-                <p>Optimized for speed and reliability to handle your most demanding tasks.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Secure Platform</h3>
-                <p>Enterprise-grade security to protect your data and privacy.</p>
-            </div>
-        </div>
-    </div>
 
-    <footer>
+
+
+
+   <footer>
         <p>&copy; 2025 Breazy. All rights reserved.</p>
     </footer>
+
+    
 </body>
 </html>

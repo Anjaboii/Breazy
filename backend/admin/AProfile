@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="icon" href="https://via.placeholder.com/32" type="image/png">
+    
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #2c3e50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 3rem 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header h1 {
+            color: var(--secondary-color);
+            font-size: 2.5rem;
+        }
+
+        .profile-header p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .profile-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+        }
+
+        .profile-detail span {
+            font-weight: bold;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 2rem;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #3755cc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+            <p>Welcome to your profile page. Here's your account information:</p>
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-detail">
+                <span>Name:</span> <span>John Doe</span>
+            </div>
+            <div class="profile-detail">
+                <span>Email:</span> <span>john.doe@example.com</span>
+            </div>
+            <div class="profile-detail">
+                <span>ID:</span> <span>#123456</span>
+            </div>
+        </div>
+
+        <a href="AHome" class="back-btn">Back to Admin Home</a>
+    </div>
+
+</body>
+</html>

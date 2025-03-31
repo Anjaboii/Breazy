@@ -1,0 +1,22 @@
+{
+    "name": "anjaboii/breazy-aqi",
+    "description": "Real-time air quality monitoring system for Colombo.",
+    "type": "project",
+    "require-dev": {
+        "laravel/framework": "^12.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Anjaboii\\BreazyAqi\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ANJANA HERATH",
+            "email": "vinukthiherath@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
