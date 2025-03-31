@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - View Locations</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+
+        button {
+            padding: 5px 10px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: darkred;
+        }
+
+        /* Navbar Styles */
+        nav {
+            background-color: #333;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background: #575757;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="admin">Add location</a>
+        <a href="addedlocations">Manage Locations</a>
+        <a href="manage_sensors.html">Manage Sensors</a>
+        <a href="psignup">Logout</a>
+    </nav>
+
+    <h2>Added Locations</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Location</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>AQI</th>
+                <th>Created Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="locationTable">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        function fetchLocations() {
+    fetch("http://localhost/BreazyAQI/backend/resources/php/getlocationsadmin.php")
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById("locationTable");
+            tableBody.innerHTML = "";
+
+            data.forEach(location => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${location.id}</td>
+                    <td>${location.location}</td>
+                    <td>${location.latitude}</td>
+                    <td>${location.longitude}</td>
+                    <td>${location.aqi}</td>
+                    <td>${new Date(location.created_at).toLocaleString()}</td>
+                    <td><button onclick="deleteLocation(${location.id})">Delete</button></td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching locations:", error));
+}
+
+function deleteLocation(id) {
+    if (confirm("Are you sure you want to delete this location?")) {
+        fetch(`http://localhost/BreazyAQI/backend/resources/php/locations.php?id=${id}`, {
+            method: "DELETE",
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            fetchLocations(); // Refresh table after deletion
+        })
+        .catch(error => console.error("Error deleting location:", error));
+    }
+}
+        function deleteLocation(id) {
+            if (confirm("Are you sure you want to delete this location?")) {
+                fetch(`http://localhost/BreazyAQI/backend/resources/php/dellocationsadmin.php?id=${id}`, {
+                    method: "DELETE",
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    fetchLocations(); // Refresh table after deletion
+                })
+                .catch(error => console.error("Error deleting location:", error));
+            }
+        }
+
+        // Load locations on page load
+        window.onload = fetchLocations;
+    </script>
+
+</body>
+</html>
