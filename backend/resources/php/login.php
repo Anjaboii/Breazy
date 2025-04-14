@@ -6,13 +6,14 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
+// Get POST data
 $data = json_decode(file_get_contents("php://input"));
-$username = $data->username ?? '';
+$email = $data->username ?? ''; // Email is coming through the "username" field
 $password = $data->password ?? '';
 
 // Simple validation
-if (empty($username) || empty($password)) {
-    echo json_encode(["success" => false, "message" => "Both username and password are required"]);
+if (empty($email) || empty($password)) {
+    echo json_encode(["success" => false, "message" => "Both email and password are required"]);
     exit;
 }
 
@@ -24,8 +25,8 @@ if ($conn->connect_error) {
 }
 
 // Check credentials (plain text comparison)
-$stmt = $conn->prepare("SELECT * FROM admins WHERE username = ? AND password = ?");
-$stmt->bind_param("ss", $username, $password);
+$stmt = $conn->prepare("SELECT * FROM admins WHERE Email = ? AND password = ?");
+$stmt->bind_param("ss", $email, $password);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -33,15 +34,15 @@ if ($result->num_rows === 1) {
     // Login successful
     session_start();
     $_SESSION['admin_logged_in'] = true;
-    $_SESSION['admin_username'] = $username;
-    
+    $_SESSION['admin_email'] = $email;
+
     echo json_encode([
-        "success" => true, 
+        "success" => true,
         "message" => "Login successful",
-        "redirect" => "http://localhost/BreazyAQI/backend/admin/admin" // Update this path
+        "redirect" => "http://localhost/BreazyAQI/backend/admin/admin"
     ]);
 } else {
-    echo json_encode(["success" => false, "message" => "Invalid username or password"]);
+    echo json_encode(["success" => false, "message" => "Invalid email or password"]);
 }
 
 $stmt->close();

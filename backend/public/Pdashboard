@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Breazy - Full Screen Map</title>
-  <link rel="icon" href="assets/Logo.png" type="image/png" />
+  <link rel="icon" href="logo\breazy1.png" type="image/png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -101,7 +101,7 @@
   <header>
     <!-- Left side: logo and nav -->
     <div class="logo-nav-container">
-      <img src="images/logo.png" alt="Logo" class="logo-img" />
+      <img src="logo\Logo.png" alt="Logo" class="logo-img" />
       <nav>
         <ul>
           <li><a href="Pdashboard">HOME</a></li>

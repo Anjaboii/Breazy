@@ -1,186 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Add Locations</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - Add Locations</title>
+  <style>
+    /* Styling stays the same (you already have it well-done) */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
+    nav {
+      background-color: #333;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Navbar Styles */
-        nav {
-            background-color: #333;
-            padding: 10px 0;
-            display: flex;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    .nav-links {
+      display: flex;
+      gap: 10px;
+    }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            margin: 0 10px;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-        }
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+      border-radius: 5px;
+    }
 
-        nav a:hover {
-            background: #575757;
-            transform: scale(1.05);
-        }
+    nav a:hover {
+      background: #575757;
+      transform: scale(1.05);
+    }
 
-        /* Responsive Navbar */
-        @media (max-width: 600px) {
-            nav {
-                flex-direction: column;
-                align-items: center;
-            }
-            nav a {
-                display: block;
-                margin: 5px 0;
-                width: 90%;
-                text-align: center;
-            }
-        }
+    nav a.selected {
+      background-color: rgba(255, 255, 255, 0.3);
+      color: #333;
+    }
 
-        h2 {
-            color: #333;
-            margin-top: 20px;
-        }
+    #profileButton {
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
 
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            text-align: left;
-            width: 300px;
-        }
+    #profileButton:hover {
+      background-color: #45a049;
+    }
 
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
+    h2 {
+      color: #333;
+      margin-top: 20px;
+    }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      text-align: left;
+      width: 300px;
+    }
 
-        button {
-            margin-top: 15px;
-            padding: 10px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-        button:hover {
-            background: #45a049;
-        }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-        .fetch-btn {
-            background: #008CBA;
-        }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
 
-        .fetch-btn:hover {
-            background: #007bb5;
-        }
-    </style>
+    button:hover {
+      background: #45a049;
+    }
+
+    .fetch-btn {
+      background: #008CBA;
+    }
+
+    .fetch-btn:hover {
+      background: #007bb5;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 50%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav>
-        <a href="admin">Add location</a>
-        <a href="addedlocations">Manage Locations</a>
-        <a href="manage_sensors.html">Manage Sensors</a>
-        <a href="http://localhost/BreazyAQI/backend/public/Pdashboard">Logout</a>
-    </nav>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-links">
+      <a href="admin" id="addLocationLink" onclick="selectTab(event, 'addLocationLink')">Add location</a>
+      <a href="addedlocations" id="manageLocationsLink" onclick="selectTab(event, 'manageLocationsLink')">Manage Locations</a>
+      <a href="manage_sensors.html" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
+      <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink" onclick="selectTab(event, 'logoutLink')">Logout</a>
+    </div>
+    <button id="profileButton">Profile</button>
+  </nav>
 
-    <h2>Add New AQI Location</h2>
-    
-    <form id="locationForm">
-        <label for="location">Location Name:</label>
-        <input type="text" id="location" required>
+  <h2>Add New AQI Location</h2>
 
-        <label for="lat">Latitude:</label>
-        <input type="text" id="lat" required>
-        
-        <label for="lon">Longitude:</label>
-        <input type="text" id="lon" required>
-        
-        <label for="aqi">AQI:</label>
-        <input type="number" id="aqi" required readonly>
-        
-        <button type="button" class="fetch-btn" onclick="fetchAQI()">Fetch AQI</button>
-        <button type="submit">Add Location</button>
-    </form>
+  <form id="locationForm">
+    <label for="location">Location Name:</label>
+    <input type="text" id="location" required>
 
-    <script>
-        function fetchAQI() {
-            const lat = document.getElementById("lat").value;
-            const lon = document.getElementById("lon").value;
+    <label for="lat">Latitude:</label>
+    <input type="text" id="lat" required>
 
-            if (!lat || !lon) {
-                alert("Please enter Latitude and Longitude first.");
-                return;
-            }
+    <label for="lon">Longitude:</label>
+    <input type="text" id="lon" required>
 
-            const apiKey = "6EF56E2D-0E56-11F0-81BE-42010A80001F"; // Your API Key
-            const url = `https://api.purpleair.com/v1/sensors?fields=pm2.5&location_type=0&lat=${lat}&lon=${lon}&radius=1000&api_key=${apiKey}`;
+    <label for="aqi">AQI:</label>
+    <input type="number" id="aqi" readonly required>
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data && data.data.length > 0) {
-                        const aqi = data.data[0][1]; // Get PM2.5 value (second element in the array)
-                        document.getElementById("aqi").value = aqi;
-                    } else {
-                        alert("No AQI data found for this location.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching AQI:", error);
-                    alert("There was an error fetching the AQI data.");
-                });
-        }
+    <button type="button" class="fetch-btn" onclick="fetchAQI()">Fetch AQI</button>
+    <button type="submit">Add Location</button>
+  </form>
 
-        document.getElementById("locationForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>Admin Profile</h2>
+      <p><strong>Name:</strong> <span id="adminName"></span></p>
+      <p><strong>Email:</strong> <span id="adminEmail"></span></p>
+      <p><strong>Role:</strong> <span id="adminRole"></span></p>
+    </div>
+  </div>
 
-            const location = document.getElementById("location").value;
-            const lat = document.getElementById("lat").value;
-            const lon = document.getElementById("lon").value;
-            const aqi = document.getElementById("aqi").value;
+  <script>
+    // Tab highlighting
+    function selectTab(event, linkId) {
+      const links = document.querySelectorAll('nav a');
+      links.forEach(link => link.classList.remove('selected'));
+      document.getElementById(linkId).classList.add('selected');
+      localStorage.setItem('selectedTab', linkId);
+    }
 
-            fetch("http://localhost/BreazyAQI/backend/resources/php/api.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ location, lat, lon, aqi })
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => console.error("Error:", error));
+    window.onload = () => {
+      const selectedTab = localStorage.getItem('selectedTab');
+      if (selectedTab) {
+        const tab = document.getElementById(selectedTab);
+        if (tab) tab.classList.add('selected');
+      } else {
+        document.getElementById('addLocationLink').classList.add('selected');
+      }
+    }
+
+    // Fetch AQI from PurpleAir
+    function fetchAQI() {
+      const lat = document.getElementById("lat").value;
+      const lon = document.getElementById("lon").value;
+
+      if (!lat || !lon) {
+        alert("Please enter Latitude and Longitude first.");
+        return;
+      }
+
+      const apiKey = "6EF56E2D-0E56-11F0-81BE-42010A80001F";
+      const url = `https://api.purpleair.com/v1/sensors?fields=pm2.5&location_type=0&lat=${lat}&lon=${lon}&radius=1000&api_key=${apiKey}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.data && data.data.length > 0) {
+            document.getElementById("aqi").value = data.data[0][1];
+          } else {
+            alert("No AQI data found for this location.");
+          }
+        })
+        .catch(err => {
+          console.error("AQI Fetch Error:", err);
+          alert("Error fetching AQI data.");
         });
-    </script>
+    }
+
+    // Submit location form
+    document.getElementById("locationForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const location = document.getElementById("location").value;
+      const lat = document.getElementById("lat").value;
+      const lon = document.getElementById("lon").value;
+      const aqi = document.getElementById("aqi").value;
+
+      fetch("http://localhost/BreazyAQI/backend/resources/php/api.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ location, lat, lon, aqi })
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message))
+      .catch(err => {
+        console.error("Add Location Error:", err);
+        alert("Error adding location.");
+      });
+    });
+
+    // Profile modal logic
+    const profileModal = document.getElementById("profileModal");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    document.getElementById("profileButton").onclick = () => {
+  fetch("http://localhost/BreazyAQI/backend/resources/php/getprofile.php")
+    .then(response => response.json())
+    .then(data => {
+      console.log("Profile response:", data); // 👈 ADD THIS LINE
+
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      const modalContent = `
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Admin Profile</h2>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Role:</strong> ${data.role}</p>
+      `;
+      const modal = document.getElementById("profileModal");
+      modal.querySelector(".modal-content").innerHTML = modalContent;
+      modal.style.display = "block";
+
+      document.getElementById("closeModal").onclick = () => modal.style.display = "none";
+    })
+    .catch(error => {
+      console.error("Error fetching profile:", error);
+      alert("Failed to load profile info.");
+    });
+};
+
+
+    closeModalBtn.onclick = () => {
+      profileModal.style.display = "none";
+    };
+
+    window.onclick = (event) => {
+      if (event.target === profileModal) {
+        profileModal.style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>

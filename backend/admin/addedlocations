@@ -73,16 +73,22 @@
             background: #575757;
             transform: scale(1.05);
         }
+
+        /* Selected button effect */
+        nav a.selected {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #333;
+        }
     </style>
 </head>
 <body>
 
     <!-- Navigation Bar -->
     <nav>
-        <a href="admin">Add location</a>
-        <a href="addedlocations">Manage Locations</a>
-        <a href="manage_sensors.html">Manage Sensors</a>
-        <a href="psignup">Logout</a>
+        <a href="admin" id="addLocationLink" onclick="selectTab(event, 'addLocationLink')">Add location</a>
+        <a href="addedlocations" id="manageLocationsLink" onclick="selectTab(event, 'manageLocationsLink')">Manage Locations</a>
+        <a href="manage_sensors.html" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
+        <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink" onclick="logout()">Logout</a>
     </nav>
 
     <h2>Added Locations</h2>
@@ -105,45 +111,68 @@
     </table>
 
     <script>
+        // Function to handle the tab selection
+        function selectTab(event, linkId) {
+            // Remove the selected class from all nav links
+            const links = document.querySelectorAll('nav a');
+            links.forEach(link => link.classList.remove('selected'));
+
+            // Add the selected class to the clicked link
+            const clickedLink = document.getElementById(linkId);
+            clickedLink.classList.add('selected');
+
+            // Save the selected tab to localStorage
+            localStorage.setItem('selectedTab', linkId);
+        }
+
+        // Function to clear localStorage and reset tab when logging out
+        function logout() {
+            localStorage.removeItem('selectedTab'); // Clear the selected tab from localStorage
+            window.location.href = "psignup"; // Redirect to the logout page
+        }
+
+        // On page load, check if a tab was previously selected and highlight it
+        window.onload = function() {
+            const selectedTab = localStorage.getItem('selectedTab');
+            if (selectedTab) {
+                const tab = document.getElementById(selectedTab);
+                if (tab) {
+                    tab.classList.add('selected');
+                }
+            } else {
+                // If no tab is stored, set "Add location" as the default
+                const addLocationLink = document.getElementById('addLocationLink');
+                addLocationLink.classList.add('selected');
+            }
+            fetchLocations(); // Load locations on page load
+        }
+
         function fetchLocations() {
-    fetch("http://localhost/BreazyAQI/backend/resources/php/getlocationsadmin.php")
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById("locationTable");
-            tableBody.innerHTML = "";
+            fetch("http://localhost/BreazyAQI/backend/resources/php/getlocationsadmin.php")
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("locationTable");
+                    tableBody.innerHTML = "";
 
-            data.forEach(location => {
-                const row = document.createElement("tr");
+                    data.forEach(location => {
+                        const row = document.createElement("tr");
 
-                row.innerHTML = `
-                    <td>${location.id}</td>
-                    <td>${location.location}</td>
-                    <td>${location.latitude}</td>
-                    <td>${location.longitude}</td>
-                    <td>${location.aqi}</td>
-                    <td>${new Date(location.created_at).toLocaleString()}</td>
-                    <td><button onclick="deleteLocation(${location.id})">Delete</button></td>
-                `;
+                        row.innerHTML = `
+                            <td>${location.id}</td>
+                            <td>${location.location}</td>
+                            <td>${location.latitude}</td>
+                            <td>${location.longitude}</td>
+                            <td>${location.aqi}</td>
+                            <td>${new Date(location.created_at).toLocaleString()}</td>
+                            <td><button onclick="deleteLocation(${location.id})">Delete</button></td>
+                        `;
 
-                tableBody.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Error fetching locations:", error));
-}
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error fetching locations:", error));
+        }
 
-function deleteLocation(id) {
-    if (confirm("Are you sure you want to delete this location?")) {
-        fetch(`http://localhost/BreazyAQI/backend/resources/php/locations.php?id=${id}`, {
-            method: "DELETE",
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            fetchLocations(); // Refresh table after deletion
-        })
-        .catch(error => console.error("Error deleting location:", error));
-    }
-}
         function deleteLocation(id) {
             if (confirm("Are you sure you want to delete this location?")) {
                 fetch(`http://localhost/BreazyAQI/backend/resources/php/dellocationsadmin.php?id=${id}`, {
@@ -157,9 +186,6 @@ function deleteLocation(id) {
                 .catch(error => console.error("Error deleting location:", error));
             }
         }
-
-        // Load locations on page load
-        window.onload = fetchLocations;
     </script>
 
 </body>
