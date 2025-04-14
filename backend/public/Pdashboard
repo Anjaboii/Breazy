@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Breazy - Full Screen Map</title>
+  <title>Breazy - Real-time AQI Map</title>
   <link rel="icon" href="logo\breazy1.png" type="image/png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
@@ -95,11 +95,109 @@
       width: 100%;
       height: calc(100vh - 70px);
     }
+    
+    /* Custom popup styles */
+    .custom-popup .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+      padding: 0;
+    }
+    
+    .custom-popup .leaflet-popup-content {
+      margin: 0;
+      width: 250px !important;
+    }
+    
+    .aqi-popup-header {
+      padding: 12px 15px;
+      color: white;
+      font-weight: bold;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    
+    .aqi-popup-body {
+      padding: 15px;
+    }
+    
+    .aqi-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    
+    .aqi-status {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .aqi-details {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .aqi-details p {
+      margin: 5px 0;
+    }
+    
+    /* Legend styles */
+    .info.legend {
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      line-height: 1.5;
+    }
+    
+    .legend-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 3px 0;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 8px;
+      display: inline-block;
+    }
+    
+    /* Refresh indicator */
+    .refresh-indicator {
+      position: absolute;
+      bottom: 30px;
+      right: 10px;
+      background: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      font-size: 12px;
+      z-index: 1000;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 5px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <header>
-    <!-- Left side: logo and nav -->
     <div class="logo-nav-container">
       <img src="logo\Logo.png" alt="Logo" class="logo-img" />
       <nav>
@@ -110,44 +208,202 @@
         </ul>
       </nav>
     </div>
-
-    <!-- Right side: login button -->
     <a href="login.html" class="login-btn">Login Admin</a>
   </header>
 
   <div id="map"></div>
+  <div id="refreshIndicator" class="refresh-indicator" style="display: none;">
+    <span class="loading-spinner"></span>
+    <span>Updating AQI data...</span>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // Map initialization
       var map = L.map("map").setView([6.9271, 79.8612], 12);
-
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
-
-      fetch("http://localhost/BreazyAQI/backend/resources/php/getlocations.php")
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            data.locations.forEach(loc => {
-              let color = loc.aqi < 50 ? "green" :
-                          loc.aqi < 100 ? "yellow" :
-                          loc.aqi < 150 ? "orange" : "red";
-
-              L.circleMarker([loc.latitude, loc.longitude], {
-                color: color,
-                radius: 8,
-                fillOpacity: 0.8
-              })
-              .bindPopup(`<b>${loc.location}</b><br>AQI: ${loc.aqi}`)
-              .addTo(map);
-            });
-          } else {
-            console.error("Failed to load locations");
-          }
-        })
-        .catch(error => console.error("Error fetching locations:", error));
+      
+      // Variables to store markers and layers
+      let aqiMarkers = [];
+      let aqiCircles = [];
+      let refreshInterval;
+      const refreshIntervalMinutes = 10;
+      const refreshIntervalMs = refreshIntervalMinutes * 60 * 1000;
+      
+      // AQI color and status functions
+      function getAQIColor(aqi) {
+        if (aqi <= 50) return '#00e400'; // Good - Green
+        if (aqi <= 100) return '#ffff00'; // Moderate - Yellow
+        if (aqi <= 150) return '#ff7e00'; // Unhealthy for Sensitive Groups - Orange
+        if (aqi <= 200) return '#ff0000'; // Unhealthy - Red
+        if (aqi <= 300) return '#8f3f97'; // Very Unhealthy - Purple
+        return '#7e0023'; // Hazardous - Maroon
+      }
+      
+      function getAQIStatus(aqi) {
+        if (aqi <= 50) return 'Good';
+        if (aqi <= 100) return 'Moderate';
+        if (aqi <= 150) return 'Unhealthy for Sensitive Groups';
+        if (aqi <= 200) return 'Unhealthy';
+        if (aqi <= 300) return 'Very Unhealthy';
+        return 'Hazardous';
+      }
+      
+      function getAQIDescription(aqi) {
+        if (aqi <= 50) return 'Air quality is satisfactory, and air pollution poses little or no risk.';
+        if (aqi <= 100) return 'Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution.';
+        if (aqi <= 150) return 'Members of sensitive groups may experience health effects. The general public is less likely to be affected.';
+        if (aqi <= 200) return 'Some members of the general public may experience health effects; members of sensitive groups may experience more serious health effects.';
+        if (aqi <= 300) return 'Health alert: The risk of health effects is increased for everyone.';
+        return 'Health warning of emergency conditions: everyone is more likely to be affected.';
+      }
+      
+      // Create a custom icon
+      function createCustomIcon(aqi) {
+        const color = getAQIColor(aqi);
+        
+        return L.divIcon({
+          html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 10px;">${aqi}</div>`,
+          className: 'aqi-marker',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+      }
+      
+      // Add legend
+      const legend = L.control({position: 'bottomright'});
+      
+      legend.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'info legend');
+        const grades = [0, 50, 100, 150, 200, 300];
+        const labels = ['Good', 'Moderate', 'Unhealthy for SG', 'Unhealthy', 'Very Unhealthy', 'Hazardous'];
+        
+        div.innerHTML = '<div class="legend-title">AQI Levels</div>';
+        
+        for (let i = 0; i < grades.length; i++) {
+          div.innerHTML +=
+            '<div class="legend-item">' +
+              '<span class="legend-color" style="background:' + getAQIColor(grades[i] + 1) + '"></span>' +
+              labels[i] + ' (' + grades[i] + (grades[i + 1] ? '–' + grades[i + 1] : '+') + ')' +
+            '</div>';
+        }
+        
+        // Add refresh info
+        div.innerHTML += '<div style="margin-top: 10px; font-size: 11px; color: #666;">Data refreshes every ' + refreshIntervalMinutes + ' minutes</div>';
+        
+        return div;
+      };
+      
+      legend.addTo(map);
+      
+      // Function to clear existing markers
+      function clearMarkers() {
+        aqiMarkers.forEach(marker => map.removeLayer(marker));
+        aqiCircles.forEach(circle => map.removeLayer(circle));
+        aqiMarkers = [];
+        aqiCircles = [];
+      }
+      
+      // Function to fetch and display AQI data
+      function fetchAndDisplayAQIData() {
+        // Show loading indicator
+        document.getElementById('refreshIndicator').style.display = 'block';
+        
+        fetch("http://localhost/BreazyAQI/backend/resources/php/getlocations.php")
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Clear previous markers
+              clearMarkers();
+              
+              // Add new markers
+              data.locations.forEach(loc => {
+                const aqi = loc.aqi;
+                const color = getAQIColor(aqi);
+                
+                // Create marker with custom icon
+                const marker = L.marker([loc.latitude, loc.longitude], {
+                  icon: createCustomIcon(aqi)
+                }).addTo(map);
+                aqiMarkers.push(marker);
+                
+                // Create custom popup content
+                const popupContent = `
+                  <div class="custom-popup">
+                    <div class="aqi-popup-header" style="background-color: ${color}">
+                      ${loc.location}
+                    </div>
+                    <div class="aqi-popup-body">
+                      <div class="aqi-value" style="color: ${color}">${aqi}</div>
+                      <div class="aqi-status">${getAQIStatus(aqi)}</div>
+                      <div class="aqi-details">
+                        <p>${getAQIDescription(aqi)}</p>
+                        <p><strong>Last updated:</strong> ${loc.timestamp || new Date().toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                
+                marker.bindPopup(popupContent, {
+                  className: 'custom-popup',
+                  maxWidth: 300
+                });
+                
+                // Add a circle underneath for better visibility
+                const circle = L.circle([loc.latitude, loc.longitude], {
+                  color: color,
+                  fillColor: color,
+                  fillOpacity: 0.2,
+                  radius: 500 // Adjust radius as needed
+                }).addTo(map);
+                aqiCircles.push(circle);
+              });
+              
+              // Update last refreshed time
+              updateLastRefreshedTime();
+            } else {
+              console.error("Failed to load locations");
+            }
+          })
+          .catch(error => console.error("Error fetching locations:", error))
+          .finally(() => {
+            // Hide loading indicator
+            document.getElementById('refreshIndicator').style.display = 'none';
+          });
+      }
+      
+      // Function to update last refreshed time
+      function updateLastRefreshedTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        const dateString = now.toLocaleDateString();
+        console.log(`AQI data last refreshed at ${timeString} on ${dateString}`);
+      }
+      
+      // Initial data load
+      fetchAndDisplayAQIData();
+      
+      // Set up periodic refresh
+      refreshInterval = setInterval(fetchAndDisplayAQIData, refreshIntervalMs);
+      
+      // Add event listener to stop refreshing when page is hidden
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          clearInterval(refreshInterval);
+        } else {
+          // Restart the interval when page becomes visible again
+          fetchAndDisplayAQIData(); // Immediate refresh
+          refreshInterval = setInterval(fetchAndDisplayAQIData, refreshIntervalMs);
+        }
+      });
+      
+      // Clean up interval when page is unloaded
+      window.addEventListener('beforeunload', function() {
+        clearInterval(refreshInterval);
+      });
     });
   </script>
 </body>
