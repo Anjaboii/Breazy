@@ -113,7 +113,7 @@
         <a href="admin">Add location</a>
         <a href="addedlocations">Manage Locations</a>
         <a href="manage_sensors.html">Manage Sensors</a>
-        <a href="logout.php">Logout</a>
+        <a href="http://localhost/BreazyAQI/backend/public/Pdashboard">Logout</a>
     </nav>
 
     <h2>Add New AQI Location</h2>

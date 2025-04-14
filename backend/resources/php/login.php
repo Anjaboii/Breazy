@@ -1,59 +1,49 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+header("Content-Type: application/json");
 
+// Enable CORS if needed
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "breazy";
+$data = json_decode(file_get_contents("php://input"));
+$username = $data->username ?? '';
+$password = $data->password ?? '';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Simple validation
+if (empty($username) || empty($password)) {
+    echo json_encode(["success" => false, "message" => "Both username and password are required"]);
+    exit;
+}
 
+// Connect to DB
+$conn = new mysqli("localhost", "root", "", "breazy");
 if ($conn->connect_error) {
-    die(json_encode(["success" => false, "message" => "Database connection failed"]));
+    echo json_encode(["success" => false, "message" => "Database connection failed: " . $conn->connect_error]);
+    exit;
 }
 
-// Read JSON input
-$data = json_decode(file_get_contents("php://input"), true);
+// Check credentials (plain text comparison)
+$stmt = $conn->prepare("SELECT * FROM admins WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Validate input
-if (!isset($data["username"]) || !isset($data["password"]) || !isset($data["role"])) {
-    echo json_encode(["success" => false, "message" => "Invalid input"]);
-    exit();
+if ($result->num_rows === 1) {
+    // Login successful
+    session_start();
+    $_SESSION['admin_logged_in'] = true;
+    $_SESSION['admin_username'] = $username;
+    
+    echo json_encode([
+        "success" => true, 
+        "message" => "Login successful",
+        "redirect" => "http://localhost/BreazyAQI/backend/admin/admin" // Update this path
+    ]);
+} else {
+    echo json_encode(["success" => false, "message" => "Invalid username or password"]);
 }
 
-$username = $conn->real_escape_string($data["username"]);
-$password = $conn->real_escape_string($data["password"]);
-$role = $conn->real_escape_string($data["role"]); // Get the selected role (user/admin)
-
-// Check user credentials based on role
-$sql = "SELECT id, username, password, role FROM users WHERE username = '$username' AND role = '$role'";
-$result = $conn->query($sql);
-
-if ($result->num_rows === 0) {
-    echo json_encode(["success" => false, "message" => "Invalid username or role"]);
-    exit();
-}
-
-$user = $result->fetch_assoc();
-
-// Validate password (plaintext)
-if ($password !== $user["password"]) {
-    echo json_encode(["success" => false, "message" => "Incorrect password"]);
-    exit();
-}
-
-// Successful login
-echo json_encode([
-    "success" => true,
-    "message" => "Login successful",
-    "role" => $user["role"]
-]);
-
+$stmt->close();
 $conn->close();
 ?>

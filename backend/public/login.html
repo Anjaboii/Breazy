@@ -1,108 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-        }
-
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            text-align: left;
-            width: 300px;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            margin-top: 15px;
-            padding: 10px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background: #45a049;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error-message {
+      color: #f44336;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .show-password {
+      display: flex;
+      align-items: center;
+      margin: 0.5rem 0;
+    }
+  </style>
 </head>
 <body>
-    <h2>Login</h2>
-
+  <div class="login-container">
+    <h2>Admin Login</h2>
     <form id="loginForm">
+      <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" id="username" required>
-
+      </div>
+      
+      <div class="form-group">
         <label for="password">Password:</label>
         <input type="password" id="password" required>
-
-        <!-- Admin/User Role Dropdown -->
-        <label for="role">Role:</label>
-        <select id="role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select>
-
-        <button type="submit">Login</button>
+      </div>
+      
+      <div class="show-password">
+        <input type="checkbox" id="togglePassword">
+        <label for="togglePassword" style="margin-left: 5px; font-weight: normal;">Show Password</label>
+      </div>
+      
+      <button type="submit">Login</button>
+      <div id="errorMessage" class="error-message"></div>
     </form>
+  </div>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('change', function() {
+      const passwordField = document.getElementById('password');
+      passwordField.type = this.checked ? 'text' : 'password';
+    });
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const role = document.getElementById("role").value; // Get the selected role
-
-            // Send login data to the backend
-            fetch("http://localhost/BreazyAQI/backend/resources/php/login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, role })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Login successful!");
-                    if (data.role === "admin") {
-                        // Redirect to the admin dashboard
-                        window.location.href = "admin";
-                    } else {
-                        // Redirect to the regular user dashboard
-                        window.location.href = "Pdashboard";
-                    }
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => console.error("Error:", error));
+    // Handle form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorElement = document.getElementById('errorMessage');
+      
+      errorElement.textContent = '';
+      
+      try {
+        const response = await fetch('http://localhost/BreazyAQI/backend/resources/php/login.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password })
         });
-    </script>
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Redirect on successful login
+          window.location.href = data.redirect || 'admin';
+        } else {
+          errorElement.textContent = data.message || 'Login failed';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorElement.textContent = 'Network error. Please try again.';
+      }
+    });
+  </script>
 </body>
 </html>

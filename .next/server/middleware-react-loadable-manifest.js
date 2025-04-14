@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components\\\\aqi-dashboard.tsx -> @/components/MapView\":{\"id\":\"components\\\\aqi-dashboard.tsx -> @/components/MapView\",\"files\":[\"static/css/_app-pages-browser_components_MapView_tsx.css\",\"static/chunks/_app-pages-browser_components_MapView_tsx.js\"]}}"
