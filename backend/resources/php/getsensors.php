@@ -1,29 +1,32 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
+// Connect to the database
+require '../resources/php/db.php'; // Adjust path if needed
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "breazy";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die(json_encode(["success" => false, "message" => "Database connection failed"]));
-}
-
-// Fetch all AQI sensor data
-$sql = "SELECT id, location, latitude, longitude, aqi, created_at FROM locations ORDER BY created_at DESC";
+// Query to get sensors data from the database
+$sql = "SELECT id, name, latitude, longitude, description, is_active FROM sensors";
 $result = $conn->query($sql);
 
+// Initialize an array to hold the sensors
 $sensors = [];
-while ($row = $result->fetch_assoc()) {
-    $sensors[] = $row;
+
+if ($result->num_rows > 0) {
+    // Fetch each sensor and add it to the $sensors array
+    while ($row = $result->fetch_assoc()) {
+        $sensor = [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'latitude' => $row['latitude'],
+            'longitude' => $row['longitude'],
+            'description' => $row['description'],
+            'is_active' => (int) $row['is_active']
+        ];
+        $sensors[] = $sensor;
+    }
 }
 
-echo json_encode(["success" => true, "data" => $sensors]);
+// Return the sensor data as JSON
+echo json_encode($sensors);
 
+// Close the database connection
 $conn->close();
 ?>

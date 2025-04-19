@@ -3,216 +3,154 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact Us</title>
-
+  <title>Contact Us | BreazyAQI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --primary-color: #4a6bff;
-      --secondary-color: #2c3e50;
-      --background-color: #121212;
-      --text-color: #ffffff;
-      --white: #ffffff;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background-color: var(--background-color);
-      color: var(--text-color);
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #a8edea, #fed6e3);
+      overflow-x: hidden;
+    }
+
+    .contact-wrapper {
       min-height: 100vh;
-      padding-top: 80px; /* make space for fixed header */
-    }
-
-    /* Header Nav */
-    header {
-      background-color: #1f1f1f;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      padding: 1rem 2rem;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
+      padding: 60px 20px;
     }
 
-    .logo-nav-container {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    .logo-img {
-      height: 50px;
-      width: auto;
-    }
-
-    nav ul {
-      display: flex;
-      list-style: none;
-      gap: 1.5rem;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: var(--text-color);
+    .contact-title {
+      font-size: 40px;
       font-weight: 600;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      transition: all 0.3s ease;
+      margin-bottom: 10px;
+      color: #1b3a4b;
+      text-align: center;
     }
 
-    nav a:hover {
-      background-color: #333333;
-      color: var(--primary-color);
-    }
-
-    .login-btn {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-    }
-
-    .login-btn:hover {
-      background-color: #314cc9;
+    .contact-subtitle {
+      font-size: 18px;
+      color: #333;
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 40px;
     }
 
     .contact-container {
-      background-color: #1f1f1f;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .contact-card, .contact-form {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
       padding: 30px;
-      border-radius: 10px;
-      max-width: 700px;
-      margin: 0 auto;
-      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
     }
 
-    h1 {
-      font-size: 26px;
-      text-align: center;
-      margin-bottom: 15px;
+    .contact-card:hover, .contact-form:hover {
+      transform: translateY(-5px);
     }
 
-    .section {
-      margin-bottom: 20px;
-    }
-
-    .section h2 {
-      font-size: 18px;
-      margin-bottom: 8px;
-      color: var(--primary-color);
-    }
-
-    .section p {
-      font-size: 14px;
-      line-height: 1.6;
-      opacity: 0.9;
-    }
-
-    .contact-info {
-      margin-top: 20px;
-      text-align: left;
-    }
-
-    .contact-info div {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 5px;
+    .contact-card h3 {
       margin-bottom: 10px;
+      color: #00796b;
     }
 
-    .contact-info a {
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
+    .contact-card p {
+      margin: 0;
+      font-size: 15px;
     }
 
-    .contact-info a:hover {
-      text-decoration: underline;
-    }
-
-    .icon {
-      font-size: 18px;
-      background: var(--primary-color);
-      width: 30px;
-      height: 30px;
+    .contact-form form {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
+      flex-direction: column;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      font-family: inherit;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .contact-form button {
+      background: #1b5e20;
+      color: #fff;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .contact-form button:hover {
+      background: #2e7d32;
+    }
+
+    .map-embed {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 1100px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    iframe {
+      width: 100%;
+      height: 300px;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+      .contact-title {
+        font-size: 32px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navigation Bar -->
-  <header>
-    <div class="logo-nav-container">
-      <img src="logo/Logo.png" alt="Logo" class="logo-img" />
-      <nav>
-        <ul>
-          <li><a href="Pdashboard">HOME</a></li>
-          <li><a href="contactus">Contact US</a></li>
-          <li><a href="/map-api">MAP API</a></li>
-        </ul>
-      </nav>
-    </div>
-    <a href="login.html" class="login-btn">Login Admin</a>
-  </header>
+  <section class="contact-wrapper">
+    <h1 class="contact-title">Contact Us</h1>
+    <p class="contact-subtitle">Let us know how we can help you stay informed and safe with accurate air quality updates.</p>
 
-  <!-- Contact Content -->
-  <div class="contact-container">
-    <h1>Contact Us</h1>
-
-    <div class="section">
-      <h2>Thank You for Contacting Breezy!</h2>
-      <p>We’re here if you need us. We have all the resources you may need to get the information and answers you are looking for.</p>
-    </div>
-
-    <div class="section">
-      <h2>Breezy Community Forums</h2>
-      <p>The Breezy Community Forums is a community-driven source of information that should be your first resource for answers. You can browse topics, ask questions, and get solutions from other users.</p>
-    </div>
-
-    <div class="section">
-      <h2>Breezy FAQ</h2>
-      <p>Our FAQ contains answers to many commonly asked questions about Breezy. Search for your inquiry here to see if it has already been answered.</p>
-    </div>
-
-    <div class="section">
-      <h2>Other Ways to Get in Touch</h2>
-      <p>If you need to make a private request, here are some ways to reach us.</p>
-    </div>
-
-    <div class="section">
-      <h2>Breezy Email</h2>
-      <p>If an email response is needed and your inquiry is not found in the resources above, please contact us at:</p>
-    </div>
-
-    <div class="contact-info">
-      <div>
-        <span class="icon">📞</span>
-        <a href="tel:+4473188373">+44 7318 8373</a>
+    <div class="contact-container">
+      <div class="contact-card">
+        <h3>📍 Address</h3>
+        <p>EcoTech Park, Block C<br>Greenfield City, Earthville</p>
+        <h3>📞 Phone</h3>
+        <p>+1 (800) 123-4567</p>
+        <h3>📧 Email</h3>
+        <p>support@breazyaqi.com</p>
       </div>
-      <div>
-        <span class="icon">📧</span>
-        <a href="mailto:originalchat@gmail.com">originalchat@gmail.com</a>
+
+      <div class="contact-form">
+        <form action="#" method="post">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
       </div>
     </div>
-  </div>
+
+    <div class="map-embed">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!..." allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </section>
 
 </body>
 </html>
