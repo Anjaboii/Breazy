@@ -157,7 +157,7 @@
     <div class="nav-links">
       <a href="admin" id="addLocationLink" onclick="selectTab(event, 'addLocationLink')">Add location</a>
       <a href="addedlocations" id="manageLocationsLink" onclick="selectTab(event, 'manageLocationsLink')">Manage Locations</a>
-      <a href="manage_sensors.html" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
+      <a href="sensors.php" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
       <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink" onclick="selectTab(event, 'logoutLink')">Logout</a>
     </div>
     <button id="profileButton">Profile</button>
@@ -212,7 +212,7 @@
       }
     }
 
-    // Fetch AQI from PurpleAir
+    // Fetch AQI from WAQI or PurpleAir
     function fetchAQI() {
       const lat = document.getElementById("lat").value;
       const lon = document.getElementById("lon").value;
@@ -222,14 +222,14 @@
         return;
       }
 
-      const apiKey = "6EF56E2D-0E56-11F0-81BE-42010A80001F";
-      const url = `https://api.purpleair.com/v1/sensors?fields=pm2.5&location_type=0&lat=${lat}&lon=${lon}&radius=1000&api_key=${apiKey}`;
+      const apiKey = "4b98b49468bc4a44cc2df7ac4e0007163f430796"; // WAQI API Key
+      const url = `https://api.waqi.info/feed/geo:${lat};${lon}/?token=${apiKey}`;
 
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          if (data.data && data.data.length > 0) {
-            document.getElementById("aqi").value = data.data[0][1];
+          if (data.status === "ok") {
+            document.getElementById("aqi").value = data.data.aqi;  // AQI value
           } else {
             alert("No AQI data found for this location.");
           }
@@ -306,6 +306,8 @@
         profileModal.style.display = "none";
       }
     };
+
+    
   </script>
 </body>
 </html>

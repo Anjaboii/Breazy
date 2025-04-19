@@ -87,7 +87,7 @@
     <nav>
         <a href="admin" id="addLocationLink" onclick="selectTab(event, 'addLocationLink')">Add location</a>
         <a href="addedlocations" id="manageLocationsLink" onclick="selectTab(event, 'manageLocationsLink')">Manage Locations</a>
-        <a href="manage_sensors.html" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
+        <a href="sensors.php" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
         <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink" onclick="logout()">Logout</a>
     </nav>
 
