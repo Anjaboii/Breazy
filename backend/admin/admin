@@ -192,7 +192,7 @@
     <div class="nav-links">
       <a href="admin" id="addLocationLink" onclick="selectTab(event, 'addLocationLink')">Add location</a>
       <a href="sensors.php" id="manageSensorsLink" onclick="selectTab(event, 'manageSensorsLink')">Manage Sensors</a>
-      <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink">Logout</a>
+      <a href="http://localhost/BreazyAQI/backend/public/Pdashboard.html" id="logoutLink">Logout</a>
     </div>
     <button id="profileButton">Profile</button>
   </nav>

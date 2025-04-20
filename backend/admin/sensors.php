@@ -115,7 +115,7 @@
   <nav>
     <a href="admin" id="addLocationLink">Add location</a>
     <a href="sensors.php" id="manageSensorsLink" class="selected">Manage Sensors</a>
-    <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink">Logout</a>
+    <a href="http://localhost/BreazyAQI/backend/public/Pdashboard.html" id="logoutLink">Logout</a>
   </nav>
 
   <h1>Sensor Admin Panel</h1>
