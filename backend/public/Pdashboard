@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Breazy - Real-time AQI Map</title>
-  <link rel="icon" href="logo/breazy1.png" type="image/png" />
+  <link rel="icon" href="http://localhost/BreazyAQI/backend/resources/logo/breazyicon.png" type="image/png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -14,6 +14,7 @@
       --background-color: #f5f5f5;
       --text-color: #333;
       --white: #ffffff;
+      --sensor-color: #4a6bff;
     }
 
     * {
@@ -139,6 +140,14 @@
       margin: 5px 0;
     }
 
+    .coordinates {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+      font-size: 13px;
+      color: #666;
+    }
+
     .info.legend {
       padding: 10px;
       background: white;
@@ -192,12 +201,189 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .notification-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .notification-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .notification-icon img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .notification-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Sensor pin styles */
+    .sensor-pin {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      transform: translateY(-50%);
+      transition: transform 0.2s ease;
+    }
+
+    .sensor-pin:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .sensor-pin::before {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: var(--sensor-color);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 2px solid white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .sensor-pin::after {
+      content: 'S';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    }
+
+    .sensor-pulse {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: rgba(74, 107, 255, 0.4);
+      border-radius: 50%;
+      opacity: 0;
+      animation: pulse 2s infinite;
+      transform: translateY(-50%);
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: translateY(-50%) scale(0.8);
+        opacity: 0.7;
+      }
+      70% {
+        transform: translateY(-50%) scale(1.3);
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Live AQI Update styles */
+    .live-aqi-container {
+      margin-top: 12px;
+      padding: 8px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .live-aqi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .live-aqi-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    .live-indicator {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: #2ecc71;
+      border-radius: 50%;
+      margin-right: 5px;
+      animation: pulse-live 1.5s infinite;
+    }
+
+    @keyframes pulse-live {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    .live-aqi-timestamp {
+      font-size: 11px;
+      color: #888;
+    }
+
+    .live-aqi-value-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .live-aqi-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .aqi-change {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .aqi-change.increase {
+      color: #e74c3c;
+      background-color: rgba(231, 76, 60, 0.1);
+    }
+
+    .aqi-change.decrease {
+      color: #2ecc71;
+      background-color: rgba(46, 204, 113, 0.1);
+    }
+
+    .aqi-change.stable {
+      color: #3498db;
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    .change-icon {
+      margin-right: 3px;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="logo-nav-container">
-      <img src="logo/Logo.png" alt="Logo" class="logo-img" />
+      <img src="http://localhost/BreazyAQI/backend/resources/logo/homeB.png" alt="Logo" class="logo-img" />
       <nav>
         <ul>
           <li><a href="Pdashboard">HOME</a></li>
@@ -206,7 +392,13 @@
         </ul>
       </nav>
     </div>
-    <a href="login.html" class="login-btn">Login Admin</a>
+    <div class="notification-container">
+      <a href="login.html" class="login-btn">Login Admin</a>
+      <div id="notification-icon" class="notification-icon">
+        <img src="http://localhost/BreazyAQI/backend/resources/logo/bell.png" alt="Notifications" />
+        <span id="notification-count" class="notification-count">0</span>
+      </div>
+    </div>
   </header>
 
   <div id="map"></div>
@@ -229,6 +421,14 @@
       let refreshInterval;
       const refreshIntervalMinutes = 10;
       const refreshIntervalMs = refreshIntervalMinutes * 60 * 1000;
+      
+      // Store AQI history for locations
+      let locationAQIHistory = {};
+      
+      // For demo live updates (when popup is open)
+      let liveUpdateInterval;
+      const liveUpdateSeconds = 5; // Update every 5 seconds
+      let activePopupLocation = null;
 
       function getAQIColor(aqi) {
         if (aqi <= 50) return '#00e400';
@@ -257,14 +457,23 @@
         return 'Health warning of emergency conditions: everyone is more likely to be affected.';
       }
 
-      function createCustomIcon(aqi) {
-        const color = getAQIColor(aqi);
-        return L.divIcon({
-          html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; color: black; font-weight: bold; font-size: 12px;">${aqi}</div>`,
-          className: 'aqi-marker',
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
-        });
+      // Format coordinates to 6 decimal places
+      function formatCoordinate(coord) {
+        return Number(coord).toFixed(6);
+      }
+
+      // Format time as HH:MM:SS
+      function formatTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      // Generate a random AQI change (-3 to +3)
+      function generateRandomAQIChange(currentAQI) {
+        // More likely to fluctuate within a small range
+        const change = Math.floor(Math.random() * 7) - 3;
+        const newAQI = Math.max(1, Math.min(500, currentAQI + change)); // Keep between 1-500
+        return newAQI;
       }
 
       const legend = L.control({position: 'bottomright'});
@@ -282,9 +491,9 @@
             '</div>';
         }
 
-        div.innerHTML += `
-          <div class="legend-item">
-            <span class="legend-color" style="background: #2c3e50;"></span> Sensor Location
+        div.innerHTML += 
+          `<div class="legend-item">
+            <span class="legend-color" style="background: var(--sensor-color);"></span> Sensor Location
           </div>`;
 
         div.innerHTML += '<div style="margin-top: 10px; font-size: 11px; color: #666;">Data refreshes every ' + refreshIntervalMinutes + ' minutes</div>';
@@ -302,6 +511,120 @@
         sensorMarkers = [];
       }
 
+      function stopLiveUpdates() {
+        if (liveUpdateInterval) {
+          clearInterval(liveUpdateInterval);
+          liveUpdateInterval = null;
+        }
+        activePopupLocation = null;
+      }
+
+      function updateLiveAQI() {
+        if (!activePopupLocation) return;
+        
+        const locationId = activePopupLocation.id;
+        const previousAQI = locationAQIHistory[locationId].history[locationAQIHistory[locationId].history.length - 1];
+        const newAQI = generateRandomAQIChange(previousAQI);
+        
+        // Add to history
+        locationAQIHistory[locationId].history.push(newAQI);
+        if (locationAQIHistory[locationId].history.length > 10) {
+          locationAQIHistory[locationId].history.shift(); // Keep only last 10 readings
+        }
+        
+        // Calculate change
+        const aqiChange = newAQI - previousAQI;
+        let changeHTML = '';
+        
+        if (aqiChange > 0) {
+          changeHTML = `<div class="aqi-change increase">
+              <span class="change-icon">▲</span> +${aqiChange}
+            </div>`;
+        } else if (aqiChange < 0) {
+          changeHTML = `<div class="aqi-change decrease">
+              <span class="change-icon">▼</span> ${aqiChange}
+            </div>`;
+        } else {
+          changeHTML = `<div class="aqi-change stable">
+              <span class="change-icon">■</span> 0
+            </div>`;
+        }
+        
+        // Update the DOM elements
+        const liveAQIContainer = document.getElementById('live-aqi-container');
+        if (liveAQIContainer) {
+          const color = getAQIColor(newAQI);
+          
+          document.getElementById('live-aqi-timestamp').textContent = formatTime();
+          document.getElementById('live-aqi-value').textContent = newAQI;
+          document.getElementById('live-aqi-value').style.color = color;
+          document.getElementById('live-aqi-change').innerHTML = changeHTML;
+        }
+      }
+
+      function startLiveUpdates(location) {
+        stopLiveUpdates();
+        
+        activePopupLocation = location;
+        
+        // Initialize history if it doesn't exist
+        if (!locationAQIHistory[location.id]) {
+          locationAQIHistory[location.id] = {
+            name: location.location,
+            history: [location.aqi]
+          };
+        }
+        
+        // Set interval for updates
+        liveUpdateInterval = setInterval(updateLiveAQI, liveUpdateSeconds * 1000);
+      }
+
+      function createAQIPopupContent(loc) {
+        const aqi = loc.aqi;
+        const color = getAQIColor(aqi);
+        
+        // Initialize AQI history for this location if it doesn't exist
+        if (!locationAQIHistory[loc.id]) {
+          locationAQIHistory[loc.id] = {
+            name: loc.location,
+            history: [aqi]
+          };
+        }
+        
+        return `<div class="custom-popup">
+          <div class="aqi-popup-header" style="background-color: ${color}">
+            ${loc.location}
+          </div>
+          <div class="aqi-popup-body">
+            <div class="aqi-value" style="color: ${color}">${aqi}</div>
+            <div class="aqi-status">${getAQIStatus(aqi)}</div>
+            <div class="aqi-details">
+              <p>${getAQIDescription(aqi)}</p>
+              <p><strong>Last updated:</strong> ${loc.timestamp || new Date().toLocaleString()}</p>
+            </div>
+            <div class="coordinates">
+              <p><strong>Latitude:</strong> ${formatCoordinate(loc.latitude)}</p>
+              <p><strong>Longitude:</strong> ${formatCoordinate(loc.longitude)}</p>
+            </div>
+            <div id="live-aqi-container" class="live-aqi-container">
+              <div class="live-aqi-header">
+                <div class="live-aqi-title">
+                  <span class="live-indicator"></span>
+                  LIVE AQI UPDATES
+                </div>
+                <div id="live-aqi-timestamp" class="live-aqi-timestamp">${formatTime()}</div>
+              </div>
+              <div class="live-aqi-value-container">
+                <div id="live-aqi-value" class="live-aqi-value" style="color: ${color}">${aqi}</div>
+                <div id="live-aqi-change" class="aqi-change stable">
+                  <span class="change-icon">■</span> 0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+
       function fetchAndDisplayAQIData() {
         document.getElementById('refreshIndicator').style.display = 'block';
 
@@ -312,28 +635,65 @@
               clearMarkers();
 
               data.locations.forEach(loc => {
+                // Add ID if not present (for tracking)
+                if (!loc.id) {
+                  loc.id = `loc-${loc.latitude}-${loc.longitude}`.replace(/\./g, '-');
+                }
+                
                 const aqi = loc.aqi;
                 const color = getAQIColor(aqi);
+                
+                // Create pin-shaped AQI marker with improved styling
                 const marker = L.marker([loc.latitude, loc.longitude], {
-                  icon: createCustomIcon(aqi)
+                  icon: L.divIcon({
+                    html: `
+                      <div style="position: relative; width: 30px; height: 30px;">
+                        <div style="position: absolute; width: 30px; height: 30px; background-color: ${color}; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.3);">${aqi}</div>
+                      </div>
+                    `,
+                    className: '',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30]
+                  })
                 }).addTo(map);
+                
                 aqiMarkers.push(marker);
 
-                const popupContent = `
-                  <div class="custom-popup">
-                    <div class="aqi-popup-header" style="background-color: ${color}">
-                      ${loc.location}
-                    </div>
-                    <div class="aqi-popup-body">
-                      <div class="aqi-value" style="color: ${color}">${aqi}</div>
-                      <div class="aqi-status">${getAQIStatus(aqi)}</div>
-                      <div class="aqi-details">
-                        <p>${getAQIDescription(aqi)}</p>
-                        <p><strong>Last updated:</strong> ${loc.timestamp || new Date().toLocaleString()}</p>
-                      </div>
-                    </div>
-                  </div>`;
-                marker.bindPopup(popupContent);
+                // Add the location data to the marker for reference
+                marker.locationData = loc;
+                
+                // Store current AQI in history
+                if (!locationAQIHistory[loc.id]) {
+                  locationAQIHistory[loc.id] = {
+                    name: loc.location,
+                    history: [aqi]
+                  };
+                } else {
+                  locationAQIHistory[loc.id].history.push(aqi);
+                  if (locationAQIHistory[loc.id].history.length > 10) {
+                    locationAQIHistory[loc.id].history.shift(); // Keep only last 10 readings
+                  }
+                }
+
+                const popupContent = createAQIPopupContent(loc);
+                const popup = L.popup({
+                  className: 'custom-popup',
+                  maxWidth: 300,
+                  closeButton: true
+                }).setContent(popupContent);
+                
+                marker.bindPopup(popup);
+                
+                // Start live updates when popup opens
+                marker.on('popupopen', function() {
+                  startLiveUpdates(this.locationData);
+                });
+                
+                // Stop live updates when popup closes
+                marker.on('popupclose', function() {
+                  stopLiveUpdates();
+                });
 
                 const circle = L.circle([loc.latitude, loc.longitude], {
                   color: color,
@@ -353,22 +713,46 @@
 
       function fetchAndDisplaySensors() {
         fetch("http://localhost/BreazyAQI/backend/resources/php/getsensors.php")
-          .then(response => response.json())
+          .then(res => res.json())
           .then(data => {
+            sensorMarkers.forEach(marker => map.removeLayer(marker));
+            sensorMarkers = [];
+
             data.forEach(sensor => {
-              const sensorIcon = L.divIcon({
-                html: `<div style="background-color: #2c3e50; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
-                className: 'sensor-marker',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
+              // Create container for pin and pulse effect - increased size to match AQI pins
+              const container = L.divIcon({
+                html: 
+                  `<div style="position: relative; width: 30px; height: 30px;">
+                    <div class="sensor-pulse" style="width: 30px; height: 30px;"></div>
+                    <div style="position: absolute; width: 30px; height: 30px; background-color: var(--sensor-color); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.3);">S</div>
+                  </div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                className: 'sensor-marker'
               });
 
-              const marker = L.marker([sensor.latitude, sensor.longitude], { icon: sensorIcon }).addTo(map);
-              marker.bindPopup(`<strong>Sensor:</strong> ${sensor.name}<br><em>${sensor.description}</em>`);
+              const marker = L.marker([sensor.latitude, sensor.longitude], { 
+                icon: container,
+                riseOnHover: true
+              }).addTo(map)
+                .bindPopup(
+                  `<div style="padding: 8px; max-width: 250px;">
+                    <h4 style="margin: 0 0 5px 0; color: var(--sensor-color);">${sensor.name}</h4>
+                    <p style="margin: 0 0 10px 0; color: #555; font-size: 13px;">${sensor.description}</p>
+                    <div class="coordinates">
+                      <p><strong>Latitude:</strong> ${formatCoordinate(sensor.latitude)}</p>
+                      <p><strong>Longitude:</strong> ${formatCoordinate(sensor.longitude)}</p>
+                    </div>
+                  </div>`
+                );
+
               sensorMarkers.push(marker);
             });
           })
-          .catch(error => console.error("Error fetching sensors:", error));
+          .catch(err => {
+            console.error("Sensor fetch failed:", err);
+          });
       }
 
       fetchAndDisplayAQIData();
@@ -380,20 +764,10 @@
       }, refreshIntervalMs);
 
       document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-          clearInterval(refreshInterval);
-        } else {
+        if (document.visibilityState === 'visible') {
           fetchAndDisplayAQIData();
           fetchAndDisplaySensors();
-          refreshInterval = setInterval(() => {
-            fetchAndDisplayAQIData();
-            fetchAndDisplaySensors();
-          }, refreshIntervalMs);
         }
-      });
-
-      window.addEventListener('beforeunload', function() {
-        clearInterval(refreshInterval);
       });
     });
   </script>

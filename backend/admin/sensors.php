@@ -39,20 +39,24 @@
       background-color: #0b7dda;
     }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 10px #ddd;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f2f2f2;
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+/* Table Header and Cell Styles */
+  th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  }
+
+/* Table Header Specific Styles */
+     th {
+   background: #333;
+   color: white;
     }
     .btn {
       padding: 6px 10px;
@@ -110,7 +114,6 @@
   <!-- Navigation Bar -->
   <nav>
     <a href="admin" id="addLocationLink">Add location</a>
-    <a href="addedlocations" id="manageLocationsLink">Manage Locations</a>
     <a href="sensors.php" id="manageSensorsLink" class="selected">Manage Sensors</a>
     <a href="http://localhost/BreazyAQI/backend/public/Pdashboard" id="logoutLink">Logout</a>
   </nav>
@@ -205,6 +208,7 @@
   <table>
     <thead>
       <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Latitude</th>
         <th>Longitude</th>
@@ -216,13 +220,14 @@
     </thead>
     <tbody>
       <?php
-      $result = $conn->query("SELECT * FROM sensors ORDER BY created_at DESC");
+      $result = $conn->query("SELECT * FROM sensors ORDER BY created_at ASC");
       while ($row = $result->fetch_assoc()) {
         $status = $row['is_active'] ? 'ON' : 'OFF';
         $toggleText = $row['is_active'] ? 'Turn OFF' : 'Turn ON';
         $toggleClass = $row['is_active'] ? 'off' : 'on';
 
         echo "<tr>
+          <td>{$row['id']}</td>
           <td>{$row['name']}</td>
           <td>{$row['latitude']}</td>
           <td>{$row['longitude']}</td>
